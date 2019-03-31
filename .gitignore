@@ -2,3 +2,4 @@
 /.idea
 *.rdb
 *.log*
+package-lock.json

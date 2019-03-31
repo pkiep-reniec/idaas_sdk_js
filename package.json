@@ -1,0 +1,24 @@
+{
+  "name": "idaas_sdk_js",
+  "version": "1.0.0",
+  "description": "With this client you can connect with our solution of Identity as a Service (IDaaS) that implements OpenID Connect.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pkiep-reniec/idaas_sdk_js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pkiep-reniec/idaas_sdk_js/issues"
+  },
+  "homepage": "https://github.com/pkiep-reniec/idaas_sdk_js#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify": "^3.0.1"
+  }
+}

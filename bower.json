@@ -1,0 +1,17 @@
+{
+  "name": "idaas_sdk_js",
+  "homepage": "https://github.com/pkiep-reniec/idaas_sdk_js",
+  "authors": [
+    "Miguel Pazo <miguel.ps19@gmail.com>"
+  ],
+  "description": "With this client you can connect with our solution of Identity as a Service (IDaaS) that implements OpenID Connect.",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
