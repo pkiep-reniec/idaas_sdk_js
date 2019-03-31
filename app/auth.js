@@ -2,10 +2,10 @@
  * Created by Miguel Pazo (https://miguelpazo.com)
  */
 var idaasUris = {
-    auth: 'http://core.idaas.local/auth',
-    token: 'http://core.idaas.local/token',
-    userInfo: 'http://core.idaas.local/userinfo',
-    logout: 'http://core.idaas.local/logout'
+    auth: 'https://idaas.reniec.gob.pe/service/auth',
+    token: 'https://idaas.reniec.gob.pe/service/token',
+    userInfo: 'https://idaas.reniec.gob.pe/service/userinfo',
+    logout: 'https://idaas.reniec.gob.pe/service/logout'
 };
 
 var title = 'RENIEC IDaaS';
