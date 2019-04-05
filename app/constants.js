@@ -11,6 +11,8 @@ var ReniecIdaasConst = {
     ACR_ONLY_QUESTIONS: 'only_questions',
     PKI_DNIE_MOBILE: 'pki_dnie_mobile',
     FINGERPRINT_MOBILE: 'fingerprint_mobile',
+    PKI_DNIE_LEGACY: 'fingerprint_mobile',
+    PKI_TOKEN_LEGACY: 'fingerprint_mobile',
     PROMPT_NONE: 'none',
     PROMPT_LOGIN: 'login',
     PROMPT_CONSENT: 'consent',
