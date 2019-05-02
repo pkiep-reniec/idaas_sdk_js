@@ -285,6 +285,8 @@ window.addEventListener('message', function (event) {
                         onCancelAction();
                     }
                 }
+
+                isReload = false;
                 break;
 
             case ReniecIdaasConst.ERROR_INVALID_ORIGIN_JS:
