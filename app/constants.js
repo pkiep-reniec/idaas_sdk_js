@@ -29,4 +29,6 @@ var ReniecIdaasConst = {
     ERROR_INVALID_ORIGIN_JS: 'ReniecIDaaS_invalid_origin_js',
     EVENT_AUTH_COMPLETE: 'ReniecIDaaS_auth_complete',
     EVENT_RELOAD: 'ReniecIDaaS_reload',
+    EVENT_AUTH_RELOAD: 'ReniecIDaaS_auth_reload',
+    EVENT_AUTH_CANCEL: 'ReniecIDaaS_auth_cancel',
 };

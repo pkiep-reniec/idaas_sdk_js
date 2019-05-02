@@ -2,10 +2,11 @@
  * Created by Miguel Pazo (https://miguelpazo.com)
  */
 var idaasUris = {
-    auth: 'https://idaas.reniec.gob.pe/service/auth',
-    token: 'https://idaas.reniec.gob.pe/service/token',
-    userInfo: 'https://idaas.reniec.gob.pe/service/userinfo',
-    logout: 'https://idaas.reniec.gob.pe/service/logout'
+    service: 'http://core.idaas.local',
+    auth: 'http://core.idaas.local/auth',
+    token: 'http://core.idaas.local/token',
+    userInfo: 'http://core.idaas.local/userinfo',
+    logout: 'http://core.idaas.local/logout'
 };
 
 var title = 'RENIEC IDaaS';
@@ -21,35 +22,48 @@ var availableParams = {
 var popup = null;
 var onCancelAction = null;
 var onSuccessAction = null;
+var onLoadAction = null;
 var state = null;
 var nonce = null;
 var isReload = false;
+var loadedFired = false;
+var authReload = false;
 
 var ReniecIDaaS = {
     init: function (params) {
-        if (Array.isArray(params.scopes)) {
-            params.scopes.push('openid');
-        } else {
-            params.scopes = ['openid'];
-        }
-        availableParams.clientId = params.clientId || null;
-        availableParams.acr = params.acr || null;
-        availableParams.responseTypes = Array.isArray(params.responseTypes) ? params.responseTypes : [ReniecIdaasConst.RESPONSE_TYPE_ID_TOKEN];
-        availableParams.scopes = params.scopes;
-        availableParams.prompts = Array.isArray(params.prompts) ? params.prompts : [];
-        availableParams.maxAge = (!isNaN(params.maxAge) && params.maxAge != '') ? params.maxAge : null;
-        availableParams.loginHint = params.loginHint || null;
+        initConfig(params);
     },
 
     auth: function () {
-        url = getLoginUrl();
+        url = getLoginUrl(false);
         openPopup(url, title, 400, 650);
+    },
+
+    authPreload: function () {
+        url = getLoginUrlPreload();
+        openPopup(url, title, 400, 650);
+    },
+
+    authReload: function (params) {
+        initConfig(params);
+
+        authParams = getLoginUrl(true);
+        authReload = true;
+
+        popup.postMessage({
+            event: ReniecIdaasConst.EVENT_AUTH_RELOAD,
+            data: authParams
+        }, '*');
     },
 
     logout: function (redirect) {
         url = idaasUris.logout + '?' + encodeQueryData({post_logout_redirect_uri: redirect});
 
         location.href = url;
+    },
+
+    onLoad: function (callback) {
+        onLoadAction = callback;
     },
 
     onCancel: function (callback) {
@@ -61,7 +75,22 @@ var ReniecIDaaS = {
     }
 };
 
-function getLoginUrl() {
+function initConfig(params) {
+    if (Array.isArray(params.scopes)) {
+        params.scopes.push('openid');
+    } else {
+        params.scopes = ['openid'];
+    }
+    availableParams.clientId = params.clientId || null;
+    availableParams.acr = params.acr || null;
+    availableParams.responseTypes = Array.isArray(params.responseTypes) ? params.responseTypes : [ReniecIdaasConst.RESPONSE_TYPE_ID_TOKEN];
+    availableParams.scopes = params.scopes;
+    availableParams.prompts = Array.isArray(params.prompts) ? params.prompts : [];
+    availableParams.maxAge = (!isNaN(params.maxAge) && params.maxAge != '') ? params.maxAge : null;
+    availableParams.loginHint = params.loginHint || null;
+}
+
+function getLoginUrl(onlyParams) {
     try {
         state = Date.now() + '' + Math.random();
         nonce = 'N' + Math.random() + '' + Date.now();
@@ -91,6 +120,10 @@ function getLoginUrl() {
             params['login_hint'] = availableParams.loginHint;
         }
 
+        if (onlyParams) {
+            return params;
+        }
+
         url = idaasUris.auth + '?' + encodeQueryData(params);
 
         return url;
@@ -99,6 +132,12 @@ function getLoginUrl() {
     }
 
     return null;
+}
+
+function getLoginUrlPreload() {
+    url = idaasUris.service + '/preload-js';
+
+    return url;
 }
 
 
@@ -163,29 +202,49 @@ function procFinalResponse(response) {
     }
 }
 
+function resetInitial() {
+    loadedFired = false;
+    isReload = false;
+}
+
 /*Events*/
 window.addEventListener('message', function (event) {
     if (idaasUris.auth.indexOf(event.origin) === 0) {
-        // console.log(event.data);
-
         switch (event.data.event) {
             case ReniecIdaasConst.EVENT_LOADED:
-                if (!isReload) {
+                if (!loadedFired || authReload) {
+                    authReload = false; //not move
+
                     console.info('Event fired: ' + ReniecIdaasConst.EVENT_LOADED);
 
                     popup.postMessage({
                         event: ReniecIdaasConst.EVENT_CONNECTED,
                         code: event.data.code
                     }, '*');
-                }
 
-                isReload = false;
+                    if (typeof onLoadAction === "function" && !loadedFired) {
+                        onLoadAction();
+                    }
+
+                    loadedFired = true;
+                }
                 break;
 
             case ReniecIdaasConst.EVENT_AUTH_COMPLETE:
+                resetInitial();
                 console.info('Event fired: ' + ReniecIdaasConst.EVENT_AUTH_COMPLETE);
 
-                if (state === event.data.data.state) {
+                if (state == event.data.data.state) {
+                    if (event.data.data['error']) {
+                        console.info(event.data.data.error);
+                        console.info(event.data.data.error_description);
+
+                        if (typeof onCancelAction === "function") {
+                            onCancelAction();
+                        }
+                        break;
+                    }
+
                     var idTokenParser = parseJwt(event.data.data.id_token);
 
                     if (nonce === idTokenParser.nonce) {
@@ -219,6 +278,7 @@ window.addEventListener('message', function (event) {
 
             case ReniecIdaasConst.EVENT_CANCEL:
                 if (!isReload) {
+                    resetInitial();
                     console.info('Event fired: ' + ReniecIdaasConst.EVENT_CANCEL);
 
                     if (typeof onCancelAction === "function") {
@@ -230,6 +290,8 @@ window.addEventListener('message', function (event) {
             case ReniecIdaasConst.ERROR_INVALID_ORIGIN_JS:
                 console.info('Event fired: ' + ReniecIdaasConst.ERROR_INVALID_ORIGIN_JS);
                 console.info(event.data.message);
+
+                resetInitial();
 
                 if (typeof onCancelAction === "function") {
                     onCancelAction();
