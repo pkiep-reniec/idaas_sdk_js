@@ -28,7 +28,7 @@ var nonce = null;
 var isReload = false;
 var loadedFired = false;
 var authReload = false;
-var acrBig = [ReniecIdaasConst.ACR_PKI_DNIE, ReniecIdaasConst.ACR_PKI_TOKEN, ReniecIdaasConst.PKI_DNIE_LEGACY, ReniecIdaasConst.PKI_TOKEN_LEGACY];
+var acrBig = [ReniecIdaasConst.ACR_PKI_DNIE, ReniecIdaasConst.ACR_PKI_TOKEN, ReniecIdaasConst.ACR_PKI_DNIE_LEGACY, ReniecIdaasConst.ACR_PKI_TOKEN_LEGACY];
 var defaultWidth = 400;
 var defaultBigWidth = 800;
 
