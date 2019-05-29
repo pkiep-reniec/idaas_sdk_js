@@ -40,8 +40,6 @@ var ReniecIDaaS = {
     auth: function () {
         url = getLoginUrl(false);
         width = acrBig.indexOf(availableParams.acr) >= 0 ? defaultBigWidth : defaultWidth;
-        console.log('index');
-        console.log(acrBig.indexOf(availableParams.acr));
         openPopup(url, title, width, 650);
     },
 
