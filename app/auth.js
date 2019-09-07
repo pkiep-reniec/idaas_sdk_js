@@ -9,7 +9,7 @@ var idaasUris = {
     logout: 'https://idaas.reniec.gob.pe/service/logout'
 };
 
-var title = 'RENIEC IDaaS';
+var title = 'Plataforma de Autenticación ID Perú';
 var availableParams = {
     clientId: null,
     scopes: [],
@@ -27,7 +27,6 @@ var state = null;
 var nonce = null;
 var isReload = false;
 var loadedFired = false;
-var authReload = false;
 var acrBig = [ReniecIdaasConst.ACR_PKI_DNIE, ReniecIdaasConst.ACR_PKI_TOKEN, ReniecIdaasConst.ACR_PKI_DNIE_LEGACY, ReniecIdaasConst.ACR_PKI_TOKEN_LEGACY];
 var defaultWidth = 400;
 var defaultBigWidth = 800;
@@ -41,24 +40,6 @@ var ReniecIDaaS = {
         url = getLoginUrl(false);
         width = acrBig.indexOf(availableParams.acr) >= 0 ? defaultBigWidth : defaultWidth;
         openPopup(url, title, width, 650);
-    },
-
-    authPreload: function () {
-        url = getLoginUrlPreload();
-        width = acrBig.indexOf(availableParams.acr) >= 0 ? defaultBigWidth : defaultWidth;
-        openPopup(url, title, width, 650);
-    },
-
-    authReload: function (params) {
-        initConfig(params);
-
-        authParams = getLoginUrl(true);
-        authReload = true;
-
-        popup.postMessage({
-            event: ReniecIdaasConst.EVENT_AUTH_RELOAD,
-            data: authParams
-        }, '*');
     },
 
     logout: function (redirect) {
@@ -218,9 +199,7 @@ window.addEventListener('message', function (event) {
     if (idaasUris.auth.indexOf(event.origin) === 0) {
         switch (event.data.event) {
             case ReniecIdaasConst.EVENT_LOADED:
-                if (!loadedFired || authReload) {
-                    authReload = false; //not move
-
+                if (!loadedFired) {
                     console.info('Event fired: ' + ReniecIdaasConst.EVENT_LOADED);
 
                     popup.postMessage({
@@ -275,11 +254,6 @@ window.addEventListener('message', function (event) {
                     console.error('Wrong state');
                 }
 
-                break;
-
-            case ReniecIdaasConst.EVENT_RELOAD:
-                console.info('Event fired: ' + ReniecIdaasConst.EVENT_RELOAD);
-                isReload = true;
                 break;
 
             case ReniecIdaasConst.EVENT_CANCEL:
