@@ -6,6 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "reniec",
+    "idaas",
+    "idperu"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pkiep-reniec/idaas_sdk_js.git"
@@ -15,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/pkiep-reniec/idaas_sdk_js/issues"
   },
-  "homepage": "https://github.com/pkiep-reniec/idaas_sdk_js#readme",
+  "homepage": "https://idperu.reniec.gob.pe/site/",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
