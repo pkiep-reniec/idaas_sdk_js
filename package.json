@@ -1,6 +1,6 @@
 {
   "name": "idaas_sdk_js",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "With this client you can connect with our solution of Identity as a Service (IDaaS) that implements OpenID Connect.",
   "main": "index.js",
   "scripts": {
